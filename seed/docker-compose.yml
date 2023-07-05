@@ -30,6 +30,14 @@ services:
       - cbh_thc_network
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ~/.docker-conf/thc-cbh/redis:/data
+    networks:
+      - cbh_thc_network
 
 networks:
   cbh_thc_network:
