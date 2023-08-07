@@ -1,4 +1,4 @@
-import { WorkerWithDocuments } from '../stores/workerStore';
+import { WorkerWithDocumentsAndShifts } from '../stores/workerStore';
 import redisCache from '../cache/redisCache';
 import { Facility } from '@prisma/client';
 import facilityService from './facilityService';
@@ -7,12 +7,13 @@ import facilityStore from '../stores/facilityStore';
 jest.mock('../stores/facilityStore');
 jest.mock('../cache/redisCache');
 
-const worker: WorkerWithDocuments = {
+const worker: WorkerWithDocumentsAndShifts = {
   id: 1,
   name: 'Ada Lovelace',
   is_active: true,
   profession: 'CNA',
   documents: [],
+  shifts: [],
 };
 
 const facilities: Facility[] = [

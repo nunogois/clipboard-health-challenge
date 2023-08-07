@@ -9,7 +9,7 @@ const getAllAvailableShifts = async (
   workerId: number,
   cursor?: number,
 ): Promise<Shift[]> => {
-  const worker = await workerStore.getWorkerWithDocuments(workerId);
+  const worker = await workerStore.getWorkerWithDocumentsAndShifts(workerId);
 
   if (!worker || !worker.is_active) {
     throw new NotFoundError(`Worker with id ${workerId} not found`);

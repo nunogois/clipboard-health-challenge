@@ -1,15 +1,15 @@
 import { Shift, Facility } from '@prisma/client';
 import prisma from '../prisma';
-import { WorkerWithDocuments } from './workerStore';
+import { WorkerWithDocumentsAndShifts } from './workerStore';
 
 const getEligibleShifts = async (
-  worker: WorkerWithDocuments,
+  worker: WorkerWithDocumentsAndShifts,
   facilities: Facility[],
   cursor?: number,
   pageSize = 10,
 ): Promise<Shift[]> => {
   const facilitiyIds = facilities.map(({ id }) => id);
-  return prisma.shift.findMany({
+  const shifts = await prisma.shift.findMany({
     skip: cursor ? 1 : 0,
     take: pageSize,
     cursor: cursor
@@ -27,7 +27,18 @@ const getEligibleShifts = async (
     },
     orderBy: { id: 'asc' },
   });
+
+  return shifts.filter(
+    (potentialShift) =>
+      !worker.shifts.some(
+        (workerShift) =>
+          workerShift.start <= potentialShift.end &&
+          workerShift.end >= potentialShift.start,
+      ),
+  );
 };
+
+// SELECT * FROM shifts WHERE shift_id NOT IN (SELECT shift_id FROM shift_worker WHERE start < shift.end AND end > shift.start)
 
 export default {
   getEligibleShifts,

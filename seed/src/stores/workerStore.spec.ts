@@ -35,7 +35,9 @@ describe('workerStore', () => {
     it('should return a worker when a valid workerId is provided', async () => {
       prisma.worker.findUnique.mockResolvedValueOnce(worker);
 
-      const result = await workerStore.getWorkerWithDocuments(worker.id);
+      const result = await workerStore.getWorkerWithDocumentsAndShifts(
+        worker.id,
+      );
 
       expect(result).toEqual(worker);
       expect(prisma.worker.findUnique).toHaveBeenCalledWith({
@@ -49,7 +51,9 @@ describe('workerStore', () => {
 
       prisma.worker.findUnique.mockResolvedValueOnce(null);
 
-      const result = await workerStore.getWorkerWithDocuments(workerId);
+      const result = await workerStore.getWorkerWithDocumentsAndShifts(
+        workerId,
+      );
 
       expect(result).toBeNull();
       expect(prisma.worker.findUnique).toHaveBeenCalledWith({

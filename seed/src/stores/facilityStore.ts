@@ -1,9 +1,9 @@
 import { Facility } from '@prisma/client';
 import prisma from '../prisma';
-import { WorkerWithDocuments } from './workerStore';
+import { WorkerWithDocumentsAndShifts } from './workerStore';
 
 const getFacilitiesOfWorker = async (
-  worker: WorkerWithDocuments,
+  worker: WorkerWithDocumentsAndShifts,
 ): Promise<Facility[] | null> => {
   const documentIds = worker.documents.map(({ document_id }) => document_id);
 

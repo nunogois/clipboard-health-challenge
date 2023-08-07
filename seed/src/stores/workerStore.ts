@@ -1,21 +1,23 @@
-import { DocumentWorker, Worker } from '@prisma/client';
+import { DocumentWorker, Shift, Worker } from '@prisma/client';
 import prisma from '../prisma';
 
-export type WorkerWithDocuments = Worker & {
+export type WorkerWithDocumentsAndShifts = Worker & {
   documents: DocumentWorker[];
+  shifts: Shift[];
 };
 
-const getWorkerWithDocuments = async (
+const getWorkerWithDocumentsAndShifts = async (
   workerId: number,
-): Promise<WorkerWithDocuments | null> => {
+): Promise<WorkerWithDocumentsAndShifts | null> => {
   return prisma.worker.findUnique({
     where: { id: workerId },
     include: {
       documents: true,
+      shifts: true,
     },
   });
 };
 
 export default {
-  getWorkerWithDocuments,
+  getWorkerWithDocumentsAndShifts,
 };

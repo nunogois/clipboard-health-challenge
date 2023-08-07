@@ -1,6 +1,6 @@
 import { Facility, PrismaClient } from '@prisma/client';
 import facilityStore from './facilityStore';
-import { WorkerWithDocuments } from './workerStore';
+import { WorkerWithDocumentsAndShifts } from './workerStore';
 
 jest.mock('@prisma/client', () => {
   const mockPrisma = {
@@ -14,12 +14,13 @@ jest.mock('@prisma/client', () => {
   };
 });
 
-const worker: WorkerWithDocuments = {
+const worker: WorkerWithDocumentsAndShifts = {
   id: 1,
   name: 'Ada Lovelace',
   is_active: true,
   profession: 'CNA',
   documents: [],
+  shifts: [],
 };
 
 const facilities: Facility[] = [

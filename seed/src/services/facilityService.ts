@@ -1,10 +1,10 @@
 import { Facility } from '@prisma/client';
-import { WorkerWithDocuments } from '../stores/workerStore';
+import { WorkerWithDocumentsAndShifts } from '../stores/workerStore';
 import redisCache from '../cache/redisCache';
 import facilityStore from '../stores/facilityStore';
 
 const getFacilitiesOfWorker = async (
-  worker: WorkerWithDocuments,
+  worker: WorkerWithDocumentsAndShifts,
 ): Promise<Facility[] | null> => {
   const cacheKey = `facilities:worker:${worker.id}`;
   const cachedFacilities = await redisCache.get<Facility[]>(cacheKey);

@@ -1,6 +1,6 @@
 import { Facility, PrismaClient, Shift } from '@prisma/client';
 import shiftStore from './shiftStore';
-import { WorkerWithDocuments } from './workerStore';
+import { WorkerWithDocumentsAndShifts } from './workerStore';
 
 jest.mock('@prisma/client', () => {
   const mockPrisma = {
@@ -14,12 +14,13 @@ jest.mock('@prisma/client', () => {
   };
 });
 
-const worker: WorkerWithDocuments = {
+const worker: WorkerWithDocumentsAndShifts = {
   id: 1,
   name: 'Ada Lovelace',
   is_active: true,
   profession: 'CNA',
   documents: [],
+  shifts: [],
 };
 
 const facilities: Facility[] = [
@@ -52,6 +53,15 @@ const shifts: Shift[] = [
     profession: 'CNA',
     is_deleted: false,
     facility_id: 2,
+    worker_id: null,
+  },
+  {
+    id: 3,
+    start: new Date('2021-01-02T00:00:00.000Z'),
+    end: new Date('2021-01-02T08:00:00.000Z'),
+    profession: 'CNA',
+    is_deleted: false,
+    facility_id: 1,
     worker_id: null,
   },
 ];
@@ -96,6 +106,43 @@ describe('shiftStore', () => {
         },
         orderBy: { id: 'asc' },
       });
+    });
+
+    it('should return a list of eligible shifts for a given worker, filtering out overlapping shifts', async () => {
+      const workerWithShifts: WorkerWithDocumentsAndShifts = {
+        ...worker,
+        shifts: [
+          {
+            id: 1,
+            start: new Date('2021-01-01T00:00:00.000Z'),
+            end: new Date('2021-01-01T08:00:00.000Z'),
+            profession: 'CNA',
+            is_deleted: false,
+            facility_id: 1,
+            worker_id: 1,
+          },
+          {
+            id: 2,
+            start: new Date('2021-01-01T07:00:00.000Z'),
+            end: new Date('2021-01-01T17:00:00.000Z'),
+            profession: 'CNA',
+            is_deleted: false,
+            facility_id: 1,
+            worker_id: 1,
+          },
+        ],
+      };
+
+      prisma.shift.findMany.mockResolvedValueOnce(shifts);
+
+      const result = await shiftStore.getEligibleShifts(
+        workerWithShifts,
+        facilities,
+        cursor,
+        pageSize,
+      );
+
+      expect(result).toEqual(shifts.slice(2));
     });
   });
 });

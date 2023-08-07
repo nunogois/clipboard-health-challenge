@@ -1,17 +1,21 @@
-import workerStore, { WorkerWithDocuments } from '../stores/workerStore';
+import workerStore, {
+  WorkerWithDocumentsAndShifts,
+} from '../stores/workerStore';
 import redisCache from '../cache/redisCache';
 
-const getWorkerWithDocuments = async (
+const getWorkerWithDocumentsAndShifts = async (
   workerId: number,
-): Promise<WorkerWithDocuments | null> => {
+): Promise<WorkerWithDocumentsAndShifts | null> => {
   const cacheKey = `worker:${workerId}`;
-  const cachedWorker = await redisCache.get<WorkerWithDocuments>(cacheKey);
+  const cachedWorker = await redisCache.get<WorkerWithDocumentsAndShifts>(
+    cacheKey,
+  );
 
   if (cachedWorker) {
     return cachedWorker;
   }
 
-  const worker = await workerStore.getWorkerWithDocuments(workerId);
+  const worker = await workerStore.getWorkerWithDocumentsAndShifts(workerId);
 
   await redisCache.set(cacheKey, worker);
 
@@ -19,5 +23,5 @@ const getWorkerWithDocuments = async (
 };
 
 export default {
-  getWorkerWithDocuments,
+  getWorkerWithDocumentsAndShifts,
 };
